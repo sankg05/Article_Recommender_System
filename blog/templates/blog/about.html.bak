@@ -1,0 +1,5 @@
+{% extends "blog/base.html" %}
+	<h1>Blog Home!</h1>
+	{% block content %}
+		<h1>Blog About!</h1>
+	{% endblock content %}
