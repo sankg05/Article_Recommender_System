@@ -1,0 +1,49 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
+    <div class="media-body">
+        <div class="article-metadata">
+            <a class="mr-2" href="{% url 'user-posts' object.author.username %}">{{ object.author }}</a>
+            <small class="text-muted">{{ object.date_posted|date:"d F, Y" }}</small>
+            <small class="text-muted"> | {{ object.category }}</small>
+            {% if object.author == user %}
+            <div>
+                <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Update</a>
+                <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Delete</a>
+            </div>
+            {% endif %}
+        </div>
+        <h2 class="article-title">{{ object.title }}</h2>
+        <p class="article-content">{{ object.content }}</p>
+        <p>You can find the complete article <a href="{{ object.post_url }}"><u>here</u></a>!</p>
+
+        <!-- Star Rating Section -->
+        <div class="rating-section">
+            <div class="rating-left">
+                <h5>Average Rating:</h5>
+                <div class="stars-average">
+                    <!-- Display the dynamic average rating value -->
+                    <span class="average-rating-text">{{ average_rating }} / 5</span>
+    
+                    <!-- Always show one solid star (checked) after the average rating -->
+                    <span class="fa fa-star checked"></span>                
+                    <!-- Always show one solid star after the average rating -->
+                    
+                </div>
+            </div>
+
+            {% if user.is_authenticated %}
+            <div class="rating-right" data-user-rating="{{ user_rating }}" data-post-id="{{ object.id }}">
+                <h5>Your Rating:</h5>
+                <div class="rating-interactive">
+                    {% for star in stars %}
+                        <span class="fa fa-star {% if user_rating >= star %}checked{% endif %}" data-value="{{ star }}" data-post-id="{{ object.id }}"></span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</article>
+{% endblock content %}
