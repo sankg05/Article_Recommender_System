@@ -8,10 +8,14 @@
 				<div class="article-metadata">
 				  <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
 				  <small class="text-muted">{{ post.date_posted|date:"d F, Y" }}</small>
-				  <small class="text-muted">{{ post.category }}</small>
+				  <small class="text-muted"> | {{ post.category }}</small>
 				</div>
 				<h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
 				<p class="article-content">{{ post.content|truncatewords:50 }}</p>
+				<div class="stars-average">
+                    <span class="average-rating-text">{{ post.average_rating }} / 5</span>
+                    <span class="fa fa-star checked"></span>
+                </div>
 			  </div>
 			</article>
 		{% endfor %}

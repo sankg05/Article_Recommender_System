@@ -82,3 +82,56 @@ a.article-title:hover {
 .account-heading {
   font-size: 2.5rem;
 }
+
+/* Flexbox layout for proper alignment of average and user rating */
+.rating-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Align the average rating on the left */
+.rating-left {
+  flex: 1; /* Takes up remaining space on the left */
+}
+
+/* Align the user's rating on the right */
+.rating-right {
+  text-align: right; /* Ensures user rating is aligned to the right */
+  flex-shrink: 0; /* Prevents shrinking */
+}
+
+/* Styling for the star icons */
+.stars-average {
+  display: inline-flex;
+  align-items: center; /* Vertically align the text and star */
+  font-size: 16px; /* Text size for the rating */
+}
+
+.stars-average .fa-star {
+  color: gold; /* Color for the complete star */
+  margin-left: 5px; /* Space between the rating text and star */
+  font-size: 18px; /* Adjust star size if needed */
+  vertical-align: middle; /* Ensures the star aligns properly with the text */
+}
+
+.stars-average .average-rating-text {
+  color: #333; /* Adjust the text color */
+  line-height: 1; /* Ensure the line-height doesn't cause misalignment */
+}
+
+/* Default gray color for empty stars */
+.fa-star {
+  color: #ddd; /* Default gray color */
+  font-size: 20px; /* Adjust star size */
+}
+
+/* Full stars (yellow) */
+.checked {
+  color: gold;
+}
+
+/* Optional: space out the stars */
+.stars-average span {
+  margin-right: 5px;
+}
