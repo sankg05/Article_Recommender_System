@@ -19,6 +19,15 @@
                     </div>
                     <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
                     <p class="article-content">{{ post.content|truncatewords:50 }}</p>
+                    <div class="rating-section">
+                      <div class="rating-left">
+                          <h5>Average Rating:</h5>
+                          <div class="stars-average">
+                              <span class="average-rating-text">{{ post.average_rating|floatformat:1|default:0 }} / 5</span>
+                              <span class="fa fa-star checked"></span>                
+                          </div>
+                      </div>
+                    </div>
                   </div>
                 </article>
             {% endfor %}

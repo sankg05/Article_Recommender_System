@@ -11,4 +11,4 @@ class PageRank(object):
 
         self.vectorizer = TfidfVectorizer(stop_words = 'english')
         self.tf_idf_matrix = self.vectorizer.fit_transform(self.blogData['blog_content'])
-            
+        

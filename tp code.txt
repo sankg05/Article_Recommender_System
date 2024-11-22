@@ -6,7 +6,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views import View
 from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from .models import Posts, Interaction, UserPreference, Category
+from .models import Posts, Interaction, UserPreference
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .hybridRS import HybridRecommender
 from .pagerank import PageRank
@@ -34,31 +34,11 @@ class SearchResultsView(ListView):
 
     def get_queryset(self): # new
         query = self.request.GET.get("q")
-        
-        posts = Posts.objects.filter(
+        return  Posts.objects.filter(
             Q(title__icontains=query) |
             Q(author__username__icontains=query) |
             Q(category__catName__icontains=query)
             )
-        # interactions = Interaction.objects.all()
-        posts = posts.annotate(average_rating=Avg('interaction__rating')).order_by('-average_rating')
-        return posts
-    
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-        
-    #     # Add additional context data
-    #     if self.request.user.is_authenticated:
-    #         user_interactions = Interaction.objects.filter(user_id=self.request.user)
-    #         user_ratings = {interaction.blog_id: interaction.rating for interaction in user_interactions}
-
-    #         # Add user-specific rating to context for each post
-    #         for post in context['posts']:
-    #             post.user_rating = user_ratings.get(post.id, 0)  # Default to 0 if no rating
-            
-    #     context['stars'] = range(1, 6)  # 1 to 5 stars for rating display
-    #     return context
-
 
 class PostListView(ListView):
     model = Posts
@@ -71,23 +51,16 @@ class PostListView(ListView):
     def get_queryset(self):
         user = self.request.user
         if user.is_authenticated:
-            interactions = Interaction.objects.filter(user_id = user.id)
-            if interactions.count() >= 5:
-                blog_df, rating_df, preferences_df, preferences_list = get_hybrid_recommendations(self.request)
-                hyrbidObject = HybridRecommender(blog_df, rating_df, preferences_df)
-                final_recommendations = hyrbidObject.recommend_blogs(user.id, preferences_list)
+            blog_df, rating_df, preferences_df, preferences_list = get_hybrid_recommendations(self.request)
+            hyrbidObject = HybridRecommender(blog_df, rating_df, preferences_df)
+            final_recommendations = hyrbidObject.recommend_blogs(user.id, preferences_list)
 
-                l = final_recommendations['blog_id']
-                posts = Posts.objects.filter(id__in = l)
-                return posts
-            else:
-                user_preferences = UserPreference.objects.filter(user_id=user.id).values_list('preference', flat=True)
-                preferences_list = list(user_preferences)
-                categories = Category.objects.filter(id__in=preferences_list).values_list('catName', flat=True)
-                category_names = list(categories)
-                posts = Posts.objects.filter(category__catName__in=category_names)
-                posts = posts.annotate(average_rating=Avg('interaction__rating')).order_by('-average_rating')
-                return posts  
+            # Get the list of recommended blog IDs
+            l = final_recommendations['blog_id']
+            print(l)
+
+            posts = Posts.objects.filter(id__in = l)
+            return posts
         else:
             return Posts.objects.all().order_by('-date_posted')
 
@@ -180,7 +153,22 @@ class SubmitRatingView(View):
             'user_rating': rating  # Return the user's rating
         })
     
+
+# def get_hybrid_recommendations(request):
+#     blogData = Posts.objects.all()
+#     ratingData = Interaction.objects.all()
+#     preferenceData = UserPreference.objects.all()
+#     user_preference = UserPreference.objects.filter(user = request.user.id)
+#     preferences_list = list(user_preference.values())
+#     print(preferenceData)
+
+#     blog_df = pd.DataFrame(list(blogData))
+#     rating_df = pd.DataFrame(list(ratingData))
+#     preferences_df = pd.DataFrame(list(preferenceData))
+
+#     return blog_df, rating_df, preferences_df, preferences_list
 def get_hybrid_recommendations(request):
+    # Fetch required fields from Posts
     blogData = Posts.objects.values('id', 'title', 'content', 'category__catName', 'author__username')
     ratingData = Interaction.objects.values('user_id', 'blog_id', 'rating')
     preferenceData = UserPreference.objects.values('user_id', 'preference')
@@ -194,11 +182,10 @@ def get_hybrid_recommendations(request):
 
     # Filter user-specific preferences
     user_preference = UserPreference.objects.filter(user=request.user)
-
-    # Ensure the list contains only 'preference' strings
-    preferences_list = list(user_preference.values_list('preference', flat=True))  # Returns a list of strings
+    preferences_list = list(user_preference.values('preference'))
 
     return blog_df, rating_df, preferences_df, preferences_list
+
 
 
 def pagerank_recommendations(request):
