@@ -1,6 +1,11 @@
 {% extends "blog/base.html" %}
 	{% block content %}
-		<h1>Blog Home!</h1>
+		<!-- <h1>Search Results</h1> -->
+		<form action="{% url 'search-results' %}" method="get">
+			<input name="q" type="text" placeholder="Search..." class="form-control rounded-pill" style="border-radius: 15px;">
+		</form>
+		<br>
+		<h2>Recommended for you</h2>
 		{% for post in posts %}
 			<article class="media content-section">
 				<img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
@@ -13,7 +18,7 @@
 				<h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
 				<p class="article-content">{{ post.content|truncatewords:50 }}</p>
 				<div class="stars-average">
-                    <span class="average-rating-text">{{ post.average_rating }} / 5</span>
+                    <span class="average-rating-text">{{ post.average_rating|floatformat:1 }} / 5</span>
                     <span class="fa fa-star checked"></span>
                 </div>
 			  </div>

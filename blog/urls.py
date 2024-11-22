@@ -1,6 +1,6 @@
 from django.urls import path, register_converter
 from . import views
-from .views import PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView, UserPostListView, SubmitRatingView
+from .views import PostListView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView, UserPostListView, SubmitRatingView, SearchResultsView
 
 class FloatConverter:
     regex = r'\d+(\.\d+)?'  # Matches integers and floats
@@ -23,4 +23,5 @@ urlpatterns = [
     path('post/new/', PostCreateView.as_view(), name='post-create'),
     path('about/', views.about, name='blog-about'),
     path('rate/<int:post_id>/<float:rating>/', SubmitRatingView.as_view(), name='submit-rating'),
+    path("search/", SearchResultsView.as_view(), name="search-results"),
 ]

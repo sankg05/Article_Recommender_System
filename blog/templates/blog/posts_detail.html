@@ -1,5 +1,10 @@
 {% extends "blog/base.html" %}
 {% block content %}
+<!-- <h1>Search Results</h1> -->
+<form action="{% url 'search-results' %}" method="get">
+    <input name="q" type="text" placeholder="Search..." class="form-control rounded-pill" style="border-radius: 15px;">
+</form>
+<br>
 <article class="media content-section">
     <img class="rounded-circle article-img" src="{{ object.author.profile.image.url }}">
     <div class="media-body">
@@ -24,7 +29,7 @@
                 <h5>Average Rating:</h5>
                 <div class="stars-average">
                     <!-- Display the dynamic average rating value -->
-                    <span class="average-rating-text">{{ average_rating }} / 5</span>
+                    <span class="average-rating-text">{{ average_rating|floatformat:1 }} / 5</span>
     
                     <!-- Always show one solid star (checked) after the average rating -->
                     <span class="fa fa-star checked"></span>                
@@ -32,7 +37,7 @@
                     
                 </div>
             </div>
-
+            
             {% if user.is_authenticated %}
             <div class="rating-right" data-user-rating="{{ user_rating }}" data-post-id="{{ object.id }}">
                 <h5>Your Rating:</h5>
