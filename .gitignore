@@ -1,0 +1,3 @@
+# Removing compilation files
+# */__pycache__
+*\__pycache__

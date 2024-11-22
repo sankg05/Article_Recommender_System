@@ -1,0 +1,29 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+    <form action="{% url 'search-results' %}" method="get">
+      <input name="q" type="text" placeholder="Search..." class="form-control rounded-pill" style="border-radius: 15px;">
+    </form>
+    <br>
+    <h2>Search Results for "{{ request.GET.q }}"</h2>
+    {% if object_list %}
+        <ul>
+            {% for post in object_list %}
+                <article class="media content-section">
+                    <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+                  <div class="media-body">
+                    <div class="article-metadata">
+                      <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+                      <small class="text-muted">{{ post.date_posted|date:"d F, Y" }}</small>
+                      <small class="text-muted">{{ post.category }}</small>
+                    </div>
+                    <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                    <p class="article-content">{{ post.content|truncatewords:50 }}</p>
+                  </div>
+                </article>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No results found.</p>
+    {% endif %}
+{% endblock %}
